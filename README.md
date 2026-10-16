@@ -75,8 +75,8 @@ In particular:
 - [Leaflet](https://leafletjs.com/) 1.9.4 (BSD-2-Clause) is loaded by the
   in-app map screen at runtime from a CDN; it is not bundled in this
   repository or in the APK.
-- Map tiles and geographic data served at runtime: © CARTO (CARTO basemap
-  terms) and © OpenStreetMap contributors (ODbL).
+- Map tiles served at runtime: © Esri (World Dark Gray Base keyless basemap)
+  with © OpenStreetMap contributors as automatic fallback provider.
 - Build-time tooling (Android SDK components: aapt2, d8, zipalign,
   apksigner) is used only to produce the APK and is not redistributed here.
 
