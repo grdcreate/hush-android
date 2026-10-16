@@ -75,9 +75,12 @@ In particular:
 - [Leaflet](https://leafletjs.com/) 1.9.4 (BSD-2-Clause) is loaded by the
   in-app map screen at runtime from a CDN; it is not bundled in this
   repository or in the APK.
-- Map tiles served at runtime: real © OpenStreetMap contributor data
-  (keyless, dark-styled in-app) with © Esri World Street Map as automatic
-  fallback provider. No map API key is required by the app.
+- Map tiles served at runtime: live Google Maps raster tiles (road /
+  satellite / hybrid, keyless endpoint, map data (c) Google) with automatic
+  fallback to (c) OpenStreetMap contributors if Google tiles are unreachable.
+  No map API key is required by the app. (For official Google Maps SDK
+  features such as traffic/places, a Google Cloud API key would be needed -
+  the app deliberately avoids that dependency.)
 - Build-time tooling (Android SDK components: aapt2, d8, zipalign,
   apksigner) is used only to produce the APK and is not redistributed here.
 
