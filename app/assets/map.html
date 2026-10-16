@@ -10,12 +10,17 @@
   body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
   .sheet{position:fixed;left:14px;right:14px;bottom:16px;background:rgba(16,17,20,.94);
     border:1px solid #262a31;border-radius:22px;padding:16px 18px;color:#ecedef;
-    box-shadow:0 18px 50px rgba(0,0,0,.55)}
+    box-shadow:0 18px 50px rgba(0,0,0,.55);z-index:1000}
   .hint{font-size:10px;letter-spacing:.24em;color:#8a8f98;font-weight:700}
   .coord{font-size:15px;margin:8px 0 12px;color:#ecedef;letter-spacing:.04em}
   #ok{width:100%;border:0;border-radius:14px;padding:14px;font-weight:700;letter-spacing:.22em;
     font-size:11px;color:#14151a;background:linear-gradient(90deg,#ffd66b,#ff8a5c)}
   .leaflet-container{font-family:inherit;background:#0b0c0e}
+  /* Real OSM street data, restyled to match the app's dark theme (visual filter only,
+     the underlying geographic data is unmodified OpenStreetMap). */
+  .dtiles{filter: invert(1) hue-rotate(180deg) brightness(0.88) contrast(0.92) saturate(0.65);}
+  .leaflet-control-attribution{background:rgba(11,12,14,.7)!important;color:#8a8f98!important}
+  .leaflet-control-attribution a{color:#aab0b8!important}
 </style>
 </head>
 <body>
@@ -26,26 +31,29 @@
   <button id="ok">CONFIRM LOCATION</button>
 </div>
 <script>
-var init = {lat:26.1445, lng:91.7362, zoom:12};
+var init = {lat:26.1445, lng:91.7362, zoom:13};
 try { init = JSON.parse(AndroidBridge.getInitial()); } catch(e) {}
-var map = L.map('map', {zoomControl:false}).setView([init.lat, init.lng], init.zoom || 14);
+var map = L.map('map', {zoomControl:false}).setView([init.lat, init.lng], init.zoom || 13);
 L.control.zoom({position:'topright'}).addTo(map);
 
-// Keyless tile providers only. Primary: Esri World Dark Gray (matches the app theme).
-// Fallback: OpenStreetMap standard, if the primary ever fails.
-var esri = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-  {attribution:'Tiles &copy; Esri &mdash; Esri, Garmin, FAO, NOAA', maxNativeZoom:16, maxZoom:19}
-).addTo(map);
+// PRIMARY: real OpenStreetMap data (roads, towns, POIs), dark-styled via CSS filter.
+var primary = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution:'&copy; OpenStreetMap contributors',
+  maxZoom:19, className:'dtiles'
+}).addTo(map);
+
+// FALLBACK: Esri World Street Map (also real street data) if OSM ever fails.
 var switched = false, errs = 0;
-esri.on('tileerror', function(){
+primary.on('tileerror', function(){
   errs++;
   if (!switched && errs > 4) {
     switched = true;
-    map.removeLayer(esri);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {attribution:'&copy; OpenStreetMap contributors', maxZoom:19}).addTo(map);
-    try { AndroidBridge.toast('Map style switched to backup provider'); } catch(e) {}
+    map.removeLayer(primary);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution:'Tiles &copy; Esri &mdash; Esri, Garmin, FAO, NOAA',
+      maxZoom:19, className:'dtiles'
+    }).addTo(map);
+    try { AndroidBridge.toast('Switched to backup map provider'); } catch(e) {}
   }
 });
 
