@@ -1,0 +1,13 @@
+# build intermediates & toolchain (re-downloadable)
+sdk/
+hush-build/
+tests/out/
+# NEVER commit signing keys
+keys/
+*.jks
+*.pk8
+key.pem
+# misc
+out/
+*.idsig
+uploads/

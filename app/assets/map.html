@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  html,body,#map{height:100%;margin:0;background:#0b0c0e}
+  body{font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
+  .sheet{position:fixed;left:14px;right:14px;bottom:16px;background:rgba(16,17,20,.94);
+    border:1px solid #262a31;border-radius:22px;padding:16px 18px;color:#ecedef;
+    box-shadow:0 18px 50px rgba(0,0,0,.55)}
+  .hint{font-size:10px;letter-spacing:.24em;color:#8a8f98;font-weight:700}
+  .coord{font-size:15px;margin:8px 0 12px;color:#ecedef;letter-spacing:.04em}
+  #ok{width:100%;border:0;border-radius:14px;padding:14px;font-weight:700;letter-spacing:.22em;
+    font-size:11px;color:#14151a;background:linear-gradient(90deg,#ffd66b,#ff8a5c)}
+  .leaflet-container{font-family:inherit}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="sheet">
+  <div class="hint">TAP MAP TO DROP PIN</div>
+  <div class="coord" id="coord">—</div>
+  <button id="ok">CONFIRM LOCATION</button>
+</div>
+<script>
+var init = {lat:26.1445, lng:91.7362, zoom:12};
+try { init = JSON.parse(AndroidBridge.getInitial()); } catch(e) {}
+var map = L.map('map', {zoomControl:false}).setView([init.lat, init.lng], init.zoom || 14);
+L.control.zoom({position:'topright'}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:20
+}).addTo(map);
+var marker = null, circle = null, lat = null, lng = null;
+map.on('click', function(e){
+  lat = e.latlng.lat; lng = e.latlng.lng;
+  if (marker) { marker.setLatLng(e.latlng); circle.setLatLng(e.latlng); }
+  else {
+    marker = L.marker(e.latlng).addTo(map);
+    circle = L.circle(e.latlng, {radius:150, color:'#FF6A3D', weight:2, fillOpacity:0.12}).addTo(map);
+  }
+  document.getElementById('coord').textContent = lat.toFixed(5) + ", " + lng.toFixed(5);
+});
+document.getElementById('ok').onclick = function(){
+  if (lat == null) { AndroidBridge.toast('Tap the map first'); return; }
+  AndroidBridge.confirm(lat, lng);
+};
+</script>
+</body>
+</html>
