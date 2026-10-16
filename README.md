@@ -52,3 +52,35 @@ Requires the SDK pieces already fetched to `/home/user/sdk` (build-tools 34, pla
 - FIX map screen shows a friendly toast if tiles can't load offline
 - Hardened all receiver/service/broadcast calls with try/catch; explicit package-scoped broadcasts
 - Tests: 27/27 JVM logic tests + 41-group static reference/manifest check pass
+
+## License
+
+Copyright (c) 2026 grdcreate
+
+The original Hush project code in this repository is offered under a **dual
+license**: you may use, modify and redistribute it under **either** of the
+following, at your option:
+
+- the **MIT License** — see [LICENSE-MIT](LICENSE-MIT), or
+- the **Apache License, Version 2.0** — see [LICENSE-APACHE](LICENSE-APACHE).
+
+Whichever license you select, you must comply with all of the terms of that
+license for your use of the dual-licensed code.
+
+**Third-party components are not part of this dual license.** Dependencies,
+runtime services, assets and other components that are owned by others keep
+their own separate licenses, which remain applicable to those components.
+In particular:
+
+- [Leaflet](https://leafletjs.com/) 1.9.4 (BSD-2-Clause) is loaded by the
+  in-app map screen at runtime from a CDN; it is not bundled in this
+  repository or in the APK.
+- Map tiles and geographic data served at runtime: © CARTO (CARTO basemap
+  terms) and © OpenStreetMap contributors (ODbL).
+- Build-time tooling (Android SDK components: aapt2, d8, zipalign,
+  apksigner) is used only to produce the APK and is not redistributed here.
+
+All remaining source code, resources, icons and design assets in this
+repository are original work of the copyright holder and are covered by the
+dual license above. The complete terms of each offered license are available
+in [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE).
